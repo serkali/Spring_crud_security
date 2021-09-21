@@ -1,10 +1,13 @@
 package web.model;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -12,15 +15,37 @@ public class User {
     private String name;
     @Column(name = "lastname")
     private String lastname;
+    private String password;
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Role>roles;
 
-    public User(Long id, String name, String lastname) {
-        this.id = id;
-        this.name = name;
-        this.lastname = lastname;
-    }
 
     public User() {
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public User(Long id, String name, String lastname, Set<Role> roles) {
+        this.id = id;
+        this.name = name;
+        this.lastname = lastname;
+        this.roles = roles;
+    }
+
 
     public Long getId() {
         return id;
@@ -54,4 +79,6 @@ public class User {
                 ", lastname='" + lastname + '\'' +
                 '}';
     }
+
+
 }
