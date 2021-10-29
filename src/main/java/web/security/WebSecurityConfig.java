@@ -10,13 +10,12 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import web.services.UserDetailsServiceImpl;
+
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public UserDetailsService userDetailsService() {
         return new UserDetailsServiceImpl();
@@ -44,14 +43,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter  {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers("/list").hasAnyAuthority("USER", "ADMIN")
                 .antMatchers("/").hasAnyAuthority("USER", "ADMIN")
-                .antMatchers("/user").hasAnyAuthority("USER")
+                .antMatchers("/index").hasAnyAuthority("ADMIN")
                 .antMatchers("/new").hasAnyAuthority("ADMIN")
                 .antMatchers("/edit/**").hasAnyAuthority("ADMIN")
                 .antMatchers("/delete/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
-                .and()
-                .formLogin().permitAll()
+                .and().formLogin().successHandler(new LoginSuccessHandler())
+
                 .and()
                 .logout().permitAll()
                 .and()

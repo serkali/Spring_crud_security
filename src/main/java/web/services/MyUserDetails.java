@@ -1,8 +1,11 @@
 package web.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import web.model.Role;
 import web.model.User;
 
@@ -11,20 +14,25 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+
 public class MyUserDetails implements UserDetails {
-    private User user;
+
+    private  User user;
 
     public MyUserDetails(User user) {
         this.user = user;
     }
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<Role> roles = user.getRoles();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
         for (Role role : roles) {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         }
+
         return authorities;
     }
 
@@ -57,4 +65,6 @@ public class MyUserDetails implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

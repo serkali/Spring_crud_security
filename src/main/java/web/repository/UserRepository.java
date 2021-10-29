@@ -8,5 +8,5 @@ import web.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.name = :name")
-    public User getUserByName(@Param("name") String name);
+    public User getUserByName(@Param("name") String username);
 }

@@ -17,10 +17,7 @@
         <input type="submit" value="Logout" />
     </form>
 
-    <h1>User Manager</h1>
-    <div sec:authorize="hasAnyAuthority( 'ADMIN')">
-        <a href="new">Create New User</a>
-    </div>
+
 
     <br/><br/>
     <table border="1" cellpadding="10">
@@ -32,8 +29,7 @@
             <th>Password</th>
 
 
-            <th sec:authorize="hasAnyAuthority('ADMIN')">Actions</th>
-
+            <th sec:authorize="hasAnyAuthority('ROLE_USER')"></th>
         </tr>
         </thead>
         <tbody>
@@ -43,11 +39,10 @@
             <td th:text="${user.lastname}">Lastname</td>
             <td th:text="${user.password}">Password</td>
 
-
-            <td sec:authorize="hasAnyAuthority('ADMIN')">
-                <a th:href="@{'/edit/' + ${user.id}}">Edit</a>
+            <td sec:authorize="hasAnyAuthority('USER')">
+                <a th:href="@{'/' + ${user.id}}"></a>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <a sec:authorize="hasAuthority('ADMIN')" th:href="@{'/delete/' + ${user.id}}">Delete</a>
+
             </td>
         </tr>
         </tbody>

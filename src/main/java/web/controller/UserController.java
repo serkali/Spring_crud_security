@@ -1,73 +1,73 @@
 package web.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import web.model.User;
-import web.services.UserService;
+import web.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class UserController {
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
+
 
     @RequestMapping("/")
     public String viewHomePage(Model model) {
-        List<User> users = userService.listAll();
-        model.addAttribute("users", users);
-        return "index";
+        List<User> listProducts = userRepository.findAll();
+        model.addAttribute("users", listProducts);
+
+        return "/index";
     }
 
     @RequestMapping("/new")
-    public String newUserPage(Model model) {
+    public String showNewProductForm(Model model) {
         User user = new User();
         model.addAttribute("user", user);
-        return "new_user";
 
+        return "new_user";
     }
 
     @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String saveUser(@ModelAttribute("user") User user) {
-        userService.save(user);
+    public String saveProduct(@ModelAttribute("user") User user) {
+        userRepository.save(user);
+
         return "redirect:/";
     }
 
     @RequestMapping("/edit/{id}")
     public ModelAndView editUser(@PathVariable(name = "id") long id) {
         ModelAndView modelAndView = new ModelAndView("edit_user");
-        User user = userService.get(id);
+        Optional<User> user = userRepository.findById(id);
         modelAndView.addObject("user", user);
+
         return modelAndView;
 
     }
 
     @RequestMapping("/delete/{id}")
     public String deleteUser(@PathVariable(name = "id") long id) {
-        userService.delete(id);
+        userRepository.deleteById(id);
         return "redirect:/";
     }
 
-    @GetMapping("/user")
-    public ModelAndView showUser() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName("user");
-        modelAndView.addObject("user", user);
-        return modelAndView;
-    }
 
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
+/*    @GetMapping("/")
+    public String showUser(ModelMap model) {
+        User user = (MyUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("user", user);
+        return "/";
+    }*/
 }
+
